@@ -1,7 +1,17 @@
 import { Form } from "@remix-run/react";
 import type { FunctionComponent } from "react";
 
-import type { ContactRecord } from "../data";
+import { getContact, type ContactRecord } from "../data";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import invariant from "tiny-invariant";
+
+const loader = async ({ params }: LoaderFunctionArgs) => {
+  invariant(params.contactId, "Missing contactId param");
+  const contact = await getContact(params.contactId);
+  return new Response(JSON.stringify({ contact }), {
+    headers: { "Content-Type": "application/json" },
+  });
+};
 
 export default function Contact() {
   const contact = {
@@ -37,9 +47,7 @@ export default function Contact() {
 
         {contact.twitter ? (
           <p>
-            <a
-              href={`https://twitter.com/${contact.twitter}`}
-            >
+            <a href={`https://twitter.com/${contact.twitter}`}>
               {contact.twitter}
             </a>
           </p>
@@ -80,11 +88,7 @@ const Favorite: FunctionComponent<{
   return (
     <Form method="post">
       <button
-        aria-label={
-          favorite
-            ? "Remove from favorites"
-            : "Add to favorites"
-        }
+        aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
         name="favorite"
         value={favorite ? "false" : "true"}
       >
