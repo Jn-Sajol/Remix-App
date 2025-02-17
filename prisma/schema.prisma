@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Moods {
+  HAPPY
+  SAD
+  ANGRY
+  EXCITED
+  CALM
+  ANXIOUS
+  NERVOUS
+  RELAXED
+  CONFIDENT
+  FRUSTRATED
+  BORED
+  HOPEFUL
+  GRATEFUL
+  LONELY
+  TIRED
+  ENERGETIC
+  CURIOUS
+  SCARED
+  LOVE
+  GUILTY
+  SHY
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  name      String
+  email     String         @unique
+  password  String
+  moods     Mood[]
+  createdAt DateTime       @default(now())
+}
+
+model Mood {
+  id        Int   @id @default(autoincrement())
+  userId    Int  
+  mood      Moods
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// model Recommendation {
+//   id        String   @id @default(uuid())
+//   mood      Mood     @unique
+//   content   String
+//   createdAt DateTime @default(now())
+// }
+
+// model Moodboard {
+//   id        String   @id @default(uuid())
+//   userId    String
+//   title     String
+//   createdAt DateTime @default(now())
+//   user      User     @relation(fields: [userId], references: [id])
+// }
